@@ -1,0 +1,129 @@
+Wireshark plugin for CCNx 1.0
+
+QUICK START
+===================
+
+NOTE: Although the plugin should build and work on Mac OSX, these instructions have
+      only been tested on Ubuntu 14.04 LTS.
+
+
+Get the source to the CCNx 1.0 Wireshark plugin:
+
+> git clone https://github.com/PARC/ccnxWireshark
+
+Now you are ready to make
+
+> cd ccnxWireshark
+> make dependencies
+
+On Ubuntu 14.04, this will walk you through installing the required dependencies. 
+
+> make plugin
+
+This will download wireshark, patch it for our new CCNx module, and compile the whole thing.
+It will take a while. 
+
+To test that it works:
+> ./wireshark/tshark -r tcp_ccnxtlv-test.pcap -V
+
+Or 
+> ./wireshark/wireshark-qt -r tcp_ccnxtlv-test.pcap 
+
+
+Note that the plugin can also be placed in $HOME/.wireshark/plugins where it will 
+be loaded by compatible versions of wireshark you may already have installed.
+
+
+You should see "CCNx 1.0" sections, like this:
+
+CCNx 1.0 TLV, Version 1
+    Fixed Header V1
+        Version: 1
+        Packet Type: Interest (0)
+        Packet Length: 49
+        Hop Limit: 255
+        Headers Length: 8
+    Optional Headers V1, Length 0
+    CCNx Message, Length 37
+        MessageType: Interest (1)
+        Name: lci:/0x1=ccnx/0x1=tutorial/0x1=list/0x10=00
+
+Note that the plugin can also be placed in $HOME/.wireshark/plugins where it will 
+be loaded by compatible versions of wireshark you may already have installed.
+
+To build the Gtk GUI version of wireshark:
+
+> make Gtk
+
+This will download wireshark, and compile the whole thing including the Gtk GUI. 
+This will produce the version of wireshark with the most feature-rich GUI. If you've 
+already built the plugin, it will be incorporated into the binary.
+
+> make user
+
+This enables the user to run wireshark with raw I/O, allowing access to ethernet packets.
+
+
+BINARY RELEASE
+===================
+
+The distribution comes with these pre-built binary plugins:
+- ccnxtlv-1.12.5-ubuntu-14_04.so	Linux Ubuntu 14.04 for wireshark 1.12.x.
+- ccnxtlv-1_10_8-macosx_10_9_5.so   Mac OS X 10.9.5 for wireshark 1.10.x.
+- ccnxtlv-1_10_8-ubuntu_14_04.so	Linux Ubuntu 14.04 for wireshark 1.10 (works with 1.6 too)
+
+You should put the plugin in to $HOME/.wireshark/plugins.
+
+After you do "make plugin", you will find the plugin in src/.libs/ccnxtlv.so.  Wireshark
+uses libtool (for cross platform support), so the actual platform shared object is
+hidden away in the .libs folder.
+
+
+DIRECTORIES
+===================
+
+plugin_source/ is the plugin source code.  It will be COPIED to wireshark/plugins/ccnxtlv.
+   This directory is under revision control in git.
+
+src/ This is a softlink to wireshark/plugins/ccnxtlv.  It is a convenience to edit files there
+   if needed, but otherwise plays no role in the build.  Remember that files in src/ and 
+   wireshark/plugsins/ccnxtlv/ ARE NOT IN GIT.  If you edit files there, you will likely
+   want to copy them back up to plugin_source.
+   
+testdata/ is a generated directory by using "make testdata".  Files prefixed by tcp_* are CCNx 1.0
+   packets with a TCP/IP encapsulation.  Those prefixed by ether_* are an Ethernet capsulation with
+   EtherType 0x0801.
+
+wireshark/ is a convenience link to the actual wireshark version (e.g. 1.10.8 or 1.11.3).  It
+   is created by the build (make wireshark).
+   
+wireshark-$(VERSION)/ is created by setting VERSION in the Makefile.  Using "make wireshark"
+   or "make config" or "make all" will download the tarball from wireshark.org, unzip it,
+   patch it, and setup the link.
+
+TODO
+===================
+ 
+- Chain to the x509 dissector for the Certificate or PublicKey
+- Interest and Content Object fragment headers not dissected
+- Signature Block does not go down to the SignatureBits level, so the displayed buffer
+  is not actually the signature, it has a 4-byte header on it still
+- Does not dissect CPI control packets 
+
+DEVELOPMENT
+===================
+- You want to edit the files in plugin_source, not src/.  src/ is a symlink to the
+  wireshark code tree, those files are not part of git.
+
+  So, typically you'd do something like this:
+
+  > # edit files in plugin_source
+  > rsync plugin_source/* src/
+  > make -C wireshark
+
+- If you modify Makefile.common (i.e you add or remove source files), you
+  need to do an "autoreconf" in the wireshark directory, then copy
+  src/Makefile.in to plugin_source/Makefile.in.
+
+
+ 
