@@ -9,14 +9,14 @@ NOTE: Although the plugin should build and work on Mac OSX, these instructions h
 
 Get the source to the CCNx 1.0 Wireshark plugin:
 
-> git clone https://github.com/PARC/CCNxWireshark
+> git clone https://github.com/PARC/ccnxWireshark
 
 Now you are ready to make
 
-> cd CCNxWireShark
+> cd ccnxWireshark
 > make dependencies
 
-On Ubuntu 14.04, this will walk you through installing the required dependencies.
+On Ubuntu 14.04, this will walk you through installing the required dependencies. 
 
 > make plugin
 
