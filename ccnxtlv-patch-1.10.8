@@ -1,0 +1,55 @@
+diff -u -r wireshark-tarball/CMakeLists.txt wireshark-1.10.8/CMakeLists.txt
+--- wireshark-tarball/CMakeLists.txt	2014-06-12 14:08:01.000000000 -0700
++++ wireshark-1.10.8/CMakeLists.txt	2014-06-19 00:10:00.000000000 -0700
+@@ -455,6 +455,7 @@
+ 	set(PLUGIN_DIR="${DATAFILE_DIR}/plugins/${CPACK_PACKAGE_VERSION}")
+ 	set(PLUGIN_SRC_DIRS
+ 		plugins/asn1
++		plugins/ccnxtlv
+ 		plugins/docsis
+ 		plugins/ethercat
+ 		plugins/gryphon
+diff -u -r wireshark-tarball/Makefile.am wireshark-1.10.8/Makefile.am
+--- wireshark-tarball/Makefile.am	2014-06-12 14:08:01.000000000 -0700
++++ wireshark-1.10.8/Makefile.am	2014-06-19 00:10:42.000000000 -0700
+@@ -291,6 +291,7 @@
+ -include plugins/Custom.make
+ plugin_ldadd = $(_CUSTOM_plugin_ldadd_) \
+ 	-dlopen plugins/asn1/asn1.la \
++	-dlopen plugins/ccnxtlv/ccnxtlv.la \
+ 	-dlopen plugins/docsis/docsis.la \
+ 	-dlopen plugins/ethercat/ethercat.la \
+ 	-dlopen plugins/gryphon/gryphon.la \
+diff -u -r wireshark-tarball/configure.ac wireshark-1.10.8/configure.ac
+--- wireshark-tarball/configure.ac	2014-06-12 14:08:01.000000000 -0700
++++ wireshark-1.10.8/configure.ac	2014-06-19 00:12:06.000000000 -0700
+@@ -2686,6 +2686,7 @@
+   packaging/svr4/pkginfo
+   plugins/Makefile
+   plugins/asn1/Makefile
++  plugins/ccnxtlv/Makefile
+   plugins/docsis/Makefile
+   plugins/ethercat/Makefile
+   plugins/gryphon/Makefile
+diff -u -r wireshark-tarball/epan/Makefile.am wireshark-1.10.8/epan/Makefile.am
+--- wireshark-tarball/epan/Makefile.am	2014-06-12 14:08:01.000000000 -0700
++++ wireshark-1.10.8/epan/Makefile.am	2014-06-19 00:11:48.000000000 -0700
+@@ -196,6 +196,7 @@
+ -include ../plugins/Custom.make
+ plugin_src = \
+ 	../plugins/asn1/packet-asn1.c \
++	../plugins/ccnxtlv/packet-ccnxtlv.c \
+ 	../plugins/docsis/packet-bintrngreq.c \
+ 	../plugins/docsis/packet-bpkmattr.c \
+ 	../plugins/docsis/packet-bpkmreq.c \
+diff -u -r wireshark-tarball/plugins/Makefile.am wireshark-1.10.8/plugins/Makefile.am
+--- wireshark-tarball/plugins/Makefile.am	2014-06-12 14:08:05.000000000 -0700
++++ wireshark-1.10.8/plugins/Makefile.am	2014-06-19 00:11:07.000000000 -0700
+@@ -25,6 +25,7 @@
+ 
+ SUBDIRS = $(_CUSTOM_SUBDIRS_) \
+ 	asn1 \
++	ccnxtlv \
+ 	docsis \
+ 	ethercat \
+ 	gryphon \
