@@ -113,7 +113,7 @@ ccnxtlvName_TlvToLci(tvbuff_t *tvb, guint tvb_offset, guint inputLength)
 	char * output = g_malloc(outputLength);
 	memset(output, 0, outputLength);
 
-	outputOffset += g_snprintf(output + outputOffset, outputLength - outputOffset, "lci:");
+	outputOffset += g_snprintf(output + outputOffset, outputLength - outputOffset, "ccnx:");
 	while( inputOffset < inputLength ) {
 		guint16 tlv_type = tvb_get_ntohs(tvb, tvb_offset + inputOffset);
 		guint16 tlv_length = tvb_get_ntohs(tvb, tvb_offset + inputOffset + 2);
@@ -145,13 +145,13 @@ guint
 ccnxtlvName_Dissect(tvbuff_t *tvb, guint headerfield, proto_tree *tree, guint offset, guint16 tlv_type, guint16 tlv_length)
 {
 	if (tree) {
-		char * lci = ccnxtlvName_TlvToLci(tvb, offset, tlv_length);
+		char * nameString = ccnxtlvName_TlvToLci(tvb, offset, tlv_length);
 //		proto_tree_add_string_format_value(tree, ccnxtlv_GetNameHeaderField(), tvb, offset, tlv_length,
 //				"", "Type 0x%04x Length %u Value %s",
-//				tlv_type, tlv_length, lci);
+//				tlv_type, tlv_length, nameString);
 		proto_tree_add_string_format_value(tree, headerfield, tvb, offset, tlv_length,
-				"", "%s", lci);
-		g_free(lci);
+				"", "%s", nameString);
+		g_free(nameString);
 	}
 	return tlv_length;
 }
